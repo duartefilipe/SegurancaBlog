@@ -11,14 +11,12 @@ import br.csi.modelo.Comentario;
 @Repository
 public class ComentarioDao {
 
-	
-	   @Autowired
-	   private SessionFactory sessionFactory;
-	   
+    @Autowired
+    private SessionFactory sessionFactory;
 
-	   @Transactional
-	   public void criaComentario(Comentario comment) {
-	       sessionFactory.getCurrentSession().save(comment);
-	   }
-	   
+    @Transactional
+    public void criaComentario(Comentario c) {
+        sessionFactory.getCurrentSession().save(c);
+    }
+
 }

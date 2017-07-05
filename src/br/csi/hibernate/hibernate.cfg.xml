@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD//EN"
+    "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+    <session-factory>
+        
+        <mapping class="br.csi.modelo.Usuario"/>
+        <mapping class="br.csi.modelo.Posts"/>
+        <mapping class="br.csi.modelo.Comentario"/>	
+        <mapping class="br.csi.modelo.hibernate"/>	
+  	
+  	
+    </session-factory>
+
+</hibernate-configuration>

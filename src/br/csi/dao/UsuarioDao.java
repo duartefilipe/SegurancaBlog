@@ -15,40 +15,38 @@ public class UsuarioDao {
     @Autowired
     private SessionFactory sessionFactory;
 
-    //pega ID e SENHA para efetuar login
     @Transactional
-    public Usuario getByLoginAndSenha(String login) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Usuario.class);
-        criteria.add(Restrictions.eqOrIsNull("login", login));
-        return (Usuario) criteria.uniqueResult();
-    }
-
-    // cadastrar um novo usuario
-    @Transactional
-    public Usuario cadastraUser(Usuario user) {
-        sessionFactory.getCurrentSession().save(user);
-        return user;
+    public Usuario getByLoginAndSenha(String l) {
+        Criteria c = sessionFactory.getCurrentSession().createCriteria(Usuario.class);
+        c.add(Restrictions.eqOrIsNull("login", l));
+        return (Usuario) c.uniqueResult();
     }
 
     @Transactional
-    public void deletaUser(Usuario user) {
-        sessionFactory.getCurrentSession().delete(user);
+    public Usuario cadastraUser(Usuario u) {
+        sessionFactory.getCurrentSession().save(u);
+        return u;
+    }
+
+    @Transactional
+    public void deletaUser(Usuario u) {
+        sessionFactory.getCurrentSession().delete(u);
     }
 
     @Transactional
     public Collection<Usuario> listaUser() {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Usuario.class);
-        return criteria.list();
+        Criteria c = sessionFactory.getCurrentSession().createCriteria(Usuario.class);
+        return c.list();
     }
 
-    @Transactional // busca pelo ID
+    @Transactional
     public Usuario getUsuario(Long id) {
         return (Usuario) sessionFactory.getCurrentSession().get(Usuario.class, id);
     }
 
     @Transactional
-    public void alteraUsuario(Usuario user) {
-        sessionFactory.getCurrentSession().saveOrUpdate(user);
+    public void alteraUsuario(Usuario u) {
+        sessionFactory.getCurrentSession().saveOrUpdate(u);
     }
 
 }

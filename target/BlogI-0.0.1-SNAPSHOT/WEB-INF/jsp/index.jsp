@@ -85,7 +85,7 @@
         <div class="container-fluid">
 
             <div class="row">
-                <div class="col-lg-9">
+                <div class="col-lg-12">
                     <div class="col-lg-12">
                         <h3 class="text-left">Posts </h3>
 
@@ -136,18 +136,6 @@
                             </div>
                         </c:if>
                     </div>
-                </div>
-
-                <div class="col-lg-3">
-                    <h3>Busca pelo Blog</h3>
-                    <div class="input-group" style="margin-top: 25px;">
-                        <input type="text" class="form-control" placeholder="Search for...">
-                        <span class="input-group-btn">
-                            <button class="btn btn-primary" type="button">Procurar!</button>
-                        </span>
-                    </div>
-                    <br><br>
-
                 </div>
             </div>
         </div>

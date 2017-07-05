@@ -12,80 +12,80 @@ import br.csi.dao.PostDao;
 import br.csi.dao.UsuarioDao;
 import br.csi.modelo.Posts;
 import br.csi.modelo.Usuario;
-
+import java.util.Collection;
 
 @Controller
 public class LoginController {
 
-	int cont = 0;
-	
-	@Autowired
-	private UsuarioDao usuarioDao;
-	
-	
-	@Autowired
-	private PostDao postDao;
-	
-	//chama a pagina principal INDEX
-	@RequestMapping("index")
-	public String redirecionaIndex(HttpServletRequest request, HttpSession session){
-		session.isNew();
-		java.util.Collection<Posts> listaPosts = postDao.listarPosts();
-		request.setAttribute("ListaDePostsIndex", listaPosts);
-		return "index";
-                
-	}
-	
-	@RequestMapping("login")
-	public String login(String login, byte[] senha, HttpServletRequest request, HttpSession session) throws NoSuchAlgorithmException {
-		
-		MessageDigest hash = MessageDigest.getInstance("SHA-1");
-		byte[] senhaHash = hash.digest(senha);
-		
-		if(login != null && senha!=null){
-			
-			Usuario usuario = usuarioDao.getByLoginAndSenha(login);
-			if(usuario!=null){
-				if(Arrays.equals(senhaHash , usuario.getSenha())){
-					if(usuario.getTipo() == true && usuario.getAtivo().equals("sim")) {
-						cont = 1;
-						session.invalidate();
-						java.util.Collection<Usuario> listaUsuario = usuarioDao.listaUser();
-						java.util.Collection<Posts> listaPosts = postDao.listarPosts();
-						request.setAttribute("ListaDePosts", listaPosts);
-						request.setAttribute("ListaUsuario", listaUsuario);
-						request.getSession().setAttribute("logado", usuario);
-						return "bemVindoAdmin";
-					}else if(usuario.getAtivo().equals("sim")){
-						java.util.Collection<Posts> listaPosts = postDao.listarPostByUser(usuario);
-						request.setAttribute("listaPost", listaPosts);
-						request.getSession().setAttribute("logado", usuario);
-						return "bemVindoComum";
-					}
-				}
-				
-				
-				if(cont >= 3){
-				   Usuario usuarioRetorno = usuarioDao.getByLoginAndSenha(login);
-				   usuarioRetorno.setAtivo("nao");
-				   usuarioDao.alteraUsuario(usuarioRetorno);
-                                   request.setAttribute("msgdesativado", "Este usuário foi desativado por errar a senha mais de 3 vezes");
-                                    System.out.println("tentou mais que 3 vezes");
-				}
-			}
-			cont= cont+1;
-			java.util.Collection<Posts> listaPosts = postDao.listarPosts();
-			request.setAttribute("ListaDePostsIndex", listaPosts);
-			return "index";
-		}
-		return "index";
-	}
-	
-	@RequestMapping("logout")
-	public String logout(HttpServletRequest request) {
-		java.util.Collection<Posts> listaPosts = postDao.listarPosts();
-		request.setAttribute("ListaDePostsIndex", listaPosts);
-		request.getSession().invalidate();
-		return "index";
-	}
+    int cont = 0;
+
+    @Autowired
+    private UsuarioDao usuarioDao;
+
+    @Autowired
+    private PostDao postDao;
+
+    @RequestMapping("index")
+    public String redirecionaIndex(HttpServletRequest request, HttpSession session) {
+        session.isNew();
+        Collection<Posts> listaPosts;
+        listaPosts = postDao.listarPosts();
+        request.setAttribute("ListaDePostsIndex", listaPosts);
+        return "index";
+    }
+
+    @RequestMapping("login")
+    public String login(String login, byte[] senha, HttpServletRequest request, HttpSession session) throws NoSuchAlgorithmException {
+
+        MessageDigest hash = MessageDigest.getInstance("SHA-1");
+        byte[] senhaHash = hash.digest(senha);
+
+        if (login != null && senha != null) {
+
+            Usuario u = usuarioDao.getByLoginAndSenha(login);
+            if (u != null) {
+                if (Arrays.equals(senhaHash, u.getSenha())) {
+                    if (u.getTipo() == true && u.getAtivo().equals("sim")) {
+                        cont = 0;
+                        session.invalidate();
+                        Collection<Usuario> listaUsuario;
+                        listaUsuario = usuarioDao.listaUser();
+                        Collection<Posts> listaPosts;
+                        listaPosts = postDao.listarPosts();
+                        request.setAttribute("ListaDePosts", listaPosts);
+                        request.setAttribute("ListaUsuario", listaUsuario);
+                        request.getSession().setAttribute("logado", u);
+                        return "Admin";
+                    } else if (u.getAtivo().equals("sim")) {
+                        Collection<Posts> listaPosts;
+                        listaPosts = postDao.listarPostByUser(u);
+                        request.setAttribute("listaPost", listaPosts);
+                        request.getSession().setAttribute("logado", u);
+                        return "Usuario";
+                    }
+                }
+
+                if (cont >= 3) {
+                    Usuario usuarioRetorno = usuarioDao.getByLoginAndSenha(login);
+                    usuarioRetorno.setAtivo("nao");
+                    usuarioDao.alteraUsuario(usuarioRetorno);
+                }
+            }
+            cont += 1;
+            Collection<Posts> listaPosts;
+            listaPosts = postDao.listarPosts();
+            request.setAttribute("ListaDePostsIndex", listaPosts);
+            return "index";
+        }
+        return "index";
+    }
+
+    @RequestMapping("logout")
+    public String logout(HttpServletRequest request) {
+        Collection<Posts> listaPosts;
+        listaPosts = postDao.listarPosts();
+        request.setAttribute("ListaDePostsIndex", listaPosts);
+        request.getSession().invalidate();
+        return "index";
+    }
 }

@@ -4,18 +4,16 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import br.csi.dao.PostDao;
 import br.csi.dao.UsuarioDao;
 import br.csi.modelo.Posts;
 import br.csi.modelo.Usuario;
+
 
 @Controller
 public class PostController {
@@ -29,7 +27,7 @@ public class PostController {
     @RequestMapping("cadastraPostAdmin")
     public String cadastraPost(Posts posts, HttpSession session, HttpServletRequest request) throws Exception {
 
-        Usuario user = (Usuario) session.getAttribute("logado"); // coloca na sessão
+        Usuario user = (Usuario) session.getAttribute("logado");
 
         Calendar calendar = new GregorianCalendar();
         SimpleDateFormat out = new SimpleDateFormat("dd/MM/yyyy");
@@ -39,33 +37,27 @@ public class PostController {
         posts.setData(out.format(calendar.getTime()));
         posts.setId_usuario(user);
 
-        System.out.print("ID DO USUARIO---" + user.getId());
         postDao.criaPost(posts);
-
         java.util.Collection<Usuario> listaUsuario = usuarioDao.listaUser();
         java.util.Collection<Posts> listaPosts = postDao.listarPosts();
-
         request.setAttribute("ListaDePosts", listaPosts);
         request.setAttribute("ListaUsuario", listaUsuario);
         request.setAttribute("msgSucesso", "Post Cadastrado com Sucesso");
-        return "bemVindoAdmin";
+        return "Admin";
 
     }
 
     @RequestMapping("cadastraPostComum")
     public String cadastraPostComum(Posts posts, HttpSession session, HttpServletRequest request) throws Exception {
 
-        Usuario user = (Usuario) session.getAttribute("logado"); // ID usuario sessão
+        Usuario user = (Usuario) session.getAttribute("logado");
 
         Calendar calendar = new GregorianCalendar();
         SimpleDateFormat out = new SimpleDateFormat("dd/MM/yyyy");
         Date date = new Date(System.currentTimeMillis());
         calendar.setTime(date);
-        //System.out.println(out.format(calendar.getTime()));
         posts.setData(out.format(calendar.getTime()));
         posts.setId_usuario(user);
-
-        System.out.print("ID DO USUARIO---" + user.getId());
 
         postDao.criaPost(posts);
         request.setAttribute("msgSucesso", "Post Cadastrado com Sucesso");
@@ -73,7 +65,7 @@ public class PostController {
         java.util.Collection<Posts> listaPosts = postDao.listarPostByUser(user);
         request.setAttribute("listaPost", listaPosts);
 
-        return "bemVindoComum";
+        return "Usuario";
 
     }
 
@@ -81,10 +73,9 @@ public class PostController {
     public String redirecionaUmPost(Long id, HttpServletRequest request) {
         Posts postCompleto = postDao.getPostsId(id);
         request.setAttribute("Post", postCompleto);
-        return "umPost";
+        return "Post";
     }
 
-    //deleta post jsp UsuarioComum
     @RequestMapping("deletaPostUsuarioComum")
     public String deletaPost(Long id, HttpSession session, HttpServletRequest request) {
         Usuario user = (Usuario) session.getAttribute("logado");
@@ -95,39 +86,31 @@ public class PostController {
             postDao.removePost(post);
             java.util.Collection<Posts> listaPosts = postDao.listarPostByUser(user);
             request.setAttribute("listaPost", listaPosts);
-            return "bemVindoComum";
+            return "Usuario";
         } else {
             session.invalidate();
             return "erro";
         }
     }
 
-    //deleta Post jsp UsuarioAdmin
     @RequestMapping("deletaPostUsuarioAdmin")
     public String deletaPostAdmin(Long id, HttpSession session, HttpServletRequest request) {
         Usuario user = (Usuario) session.getAttribute("logado");
 
-        Posts postRetorno = postDao.getPostsId(id);
-        if (user.getId() == postRetorno.getUsuario().getId()) {
         Posts post = postDao.getPostsId(id);
         postDao.removePost(post);
         java.util.Collection<Usuario> listaUsuario = usuarioDao.listaUser();
         java.util.Collection<Posts> listaPosts = postDao.listarPosts();
         request.setAttribute("ListaDePosts", listaPosts);
         request.setAttribute("ListaUsuario", listaUsuario);
-        return "bemVindoAdmin";
-        } else {
-            session.invalidate();
-            return "erro";
-        }
+        return "Admin";
 
     }
 
-    //redireciona para jsp altera Post com  Usuario Comum
     @RequestMapping("RedirecionaAlteraPost")
     public String redirecionaAlteraPost(Long id, HttpServletRequest request, HttpSession session) {
 
-        Usuario user = (Usuario) session.getAttribute("logado"); // coloca na sessão
+        Usuario user = (Usuario) session.getAttribute("logado");
 
         Posts postRetorno = postDao.getPostsId(id);
         if (user.getId() == postRetorno.getUsuario().getId()) {
@@ -143,18 +126,11 @@ public class PostController {
     @RequestMapping("RedirecionaAlteraPostUsuarioAdmin")
     public String redirecionaAlteraPostUsuarioAdmin(Long id, HttpServletRequest request, HttpSession session) {
 
-        Usuario user = (Usuario) session.getAttribute("logado"); // coloca na sessão
-        
-        
+        Usuario user = (Usuario) session.getAttribute("logado"); 
         Posts postRetorno = postDao.getPostsId(id);
-        if (user.getId() == postRetorno.getUsuario().getId()) {
         Posts postCompleto = postDao.getPostsId(id);
         request.setAttribute("PostAltera", postCompleto);
         return "alteraPost";
-        } else {
-            session.invalidate();
-            return "erro";
-        }
 
     }
 
@@ -166,7 +142,6 @@ public class PostController {
         SimpleDateFormat out = new SimpleDateFormat("dd/MM/yyyy");
         Date date = new Date(System.currentTimeMillis());
         calendar.setTime(date);
-        //System.out.println(out.format(calendar.getTime()));
         post.setData(out.format(calendar.getTime()));
         post.setId_usuario(user);
 
@@ -175,20 +150,20 @@ public class PostController {
         if (user.getTipo() == false) {
             java.util.Collection<Posts> listaPosts = postDao.listarPostByUser(user);
             request.setAttribute("listaPost", listaPosts);
-            return "bemVindoComum";
+            return "Usuario";
         } else {
             java.util.Collection<Usuario> listaUsuario = usuarioDao.listaUser();
             java.util.Collection<Posts> listaPosts = postDao.listarPosts();
             request.setAttribute("ListaDePosts", listaPosts);
             request.setAttribute("ListaUsuario", listaUsuario);
-            return "bemVindoAdmin";
+            return "Admin";
         }
     }
 
     @RequestMapping("MostraTodosPost")
     public String mostraTodosPost(HttpServletRequest request) {
 
-        java.util.Collection<Posts> listaPostsAntigos = postDao.oldPosts();
+        java.util.Collection<Posts> listaPostsAntigos = postDao.postsAntigos();
 
         java.util.Collection<Posts> listaPosts = postDao.listarPosts();
         request.setAttribute("ListaDePostsIndex", listaPosts);

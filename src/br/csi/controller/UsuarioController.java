@@ -11,6 +11,7 @@ import br.csi.dao.PostDao;
 import br.csi.dao.UsuarioDao;
 import br.csi.modelo.Posts;
 import br.csi.modelo.Usuario;
+import java.util.Collection;
 
 @Controller
 public class UsuarioController {
@@ -29,11 +30,6 @@ public class UsuarioController {
         usuario.setSenha(senhahash);
         String ativo = "sim";
 
-        System.out.println("Nome Usuario input-----" + usuario.getNome());
-        System.out.println("Login Usuario input-----" + usuario.getLogin());
-        System.out.println("Senha Usuario input-----" + usuario.getSenha());
-        System.out.println("Tipo Usuario input-------" + tipoo);
-
         if (tipoo.equals("1")) {
             usuario.setTipo(true);
             usuario.setAtivo(ativo);
@@ -43,13 +39,13 @@ public class UsuarioController {
         }
 
         usuarioDao.cadastraUser(usuario);
-        //System.out.println("RETORNO NO CONTROLLER USUARIO-----"+usuario.getNome());
-        java.util.Collection<Usuario> listaUsuario = usuarioDao.listaUser();
-        java.util.Collection<Posts> listaPosts = postDao.listarPosts();
-
+        Collection <Usuario> listaUsuario;
+        listaUsuario = usuarioDao.listaUser();
+        Collection<Posts> listaPosts;
+        listaPosts= postDao.listarPosts();
         request.setAttribute("ListaDePosts", listaPosts);
         request.setAttribute("ListaUsuario", listaUsuario);
-        return "bemVindoAdmin";
+        return "Admin";
     }
 
     @RequestMapping("deletaUsuario")
@@ -59,20 +55,20 @@ public class UsuarioController {
             usuarioDao.deletaUser(user);
             request.setAttribute("msgSucesso", "Usuário deletado com sucesso");
         } catch (Exception e) {
-            System.out.println("ERRO AO deletar Usuário");
             request.setAttribute("msgErro", "Este usuário contém um POST");
         }
-        System.out.println("ERRO AO deletar Usuário");
         request.setAttribute("msgErro", "Este usuário contém um POST");
-        java.util.Collection<Usuario> listaUsuario = usuarioDao.listaUser();
-        java.util.Collection<Posts> listaPosts = postDao.listarPosts();
+        Collection<Usuario> listaUsuario;
+        listaUsuario= usuarioDao.listaUser();
+        Collection<Posts> listaPosts;
+        listaPosts= postDao.listarPosts();
         request.setAttribute("ListaDePosts", listaPosts);
         request.setAttribute("ListaUsuario", listaUsuario);
-        return "bemVindoAdmin";
+        return "Admin";
     }
 
     @RequestMapping("situacaoUsuario")
-    public String trocaAtivo(Long id, HttpServletRequest request, HttpSession session) {
+    public String situacao(Long id, HttpServletRequest request, HttpSession session) {
 
         Usuario user = (Usuario) session.getAttribute("logado");
 
@@ -85,12 +81,14 @@ public class UsuarioController {
             usuarioDao.alteraUsuario(usuarioRetorno);
         }
 
-        java.util.Collection<Usuario> listaUsuario = usuarioDao.listaUser();
-        java.util.Collection<Posts> listaPosts = postDao.listarPosts();
+        Collection<Usuario> listaUsuario;
+        listaUsuario= usuarioDao.listaUser();
+        Collection<Posts> listaPosts;
+        listaPosts= postDao.listarPosts();
         request.setAttribute("ListaDePosts", listaPosts);
         request.setAttribute("ListaUsuario", listaUsuario);
         request.getSession().setAttribute("logado", user);
-        return "bemVindoAdmin";
+        return "Admin";
     }
 
 }
